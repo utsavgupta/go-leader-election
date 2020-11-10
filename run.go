@@ -31,7 +31,7 @@ func main() {
 
 	nodeName := namesgenerator.GetRandomName(1)
 
-	client, e := datastore.NewClient(ctx, "*detect-project-id*")
+	client, e := datastore.NewClient(ctx, "")
 
 	if e != nil {
 		panic(e)
