@@ -2,7 +2,7 @@
 
 This project demonstrates how to implement leader election in Go. This application uses Google Datastore for persisting data.
 
-For more details on the design of this demo please refer to the companion article found [here](https://www.utsavgupta.in/blog/leader-election-go/).
+For more details on the design of this demo please refer to the companion article found [here](https://www.utsavgupta.in/blog/leader-election/).
 
 ## Getting and Building the Application
 
@@ -32,5 +32,3 @@ $ export APP_STAGE=local
 $ $(gcloud beta emulators datastore env-init)
 $ ./go-leader-election
 ```
-
-In order to run multiple instances of the application and see leader election work, run the same application on different ports.
