@@ -54,12 +54,12 @@ func main() {
 
 	go func(c context.Context, cl *datastore.Client) {
 		goPreacherScheduler := schedulers.NewScheduler(nodeName, cl)
-		goPreacherScheduler(c, jobs.NewPreacher("go_preacher", "Go is a modern language for the web", os.Stdout))
+		goPreacherScheduler(c, jobs.NewPreacher("go_preacher", "Go is a modern language for the web", os.Stdout), 1*time.Minute)
 	}(ctx, client)
 
 	go func(c context.Context, cl *datastore.Client) {
 		scalaPreacherScheduler := schedulers.NewScheduler(nodeName, cl)
-		scalaPreacherScheduler(c, jobs.NewPreacher("scala_preacher", "Scala is the most exciting language on the JVM", os.Stdout))
+		scalaPreacherScheduler(c, jobs.NewPreacher("scala_preacher", "Scala is the most exciting language on the JVM", os.Stdout), 1*time.Minute)
 	}(ctx, client)
 
 	signal.Notify(intr, os.Interrupt)

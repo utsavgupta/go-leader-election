@@ -10,31 +10,29 @@ import (
 	"github.com/utsavgupta/go-leader-election/jobs"
 )
 
-// Scheduler type function consists of a context c and a job j.
-// Scheduler functions perform j periodically until c is cancelled.
-type Scheduler func(context.Context, jobs.Job)
+// Scheduler type function consists of a context c, a job j, and a duration t.
+// Scheduler functions perform j every t time units until c is cancelled.
+type Scheduler func(context.Context, jobs.Job, time.Duration)
 
 type lease struct {
 	Leader string
 	Expiry time.Time
 }
 
-// TODO: Make the sleep time configurable and write unit test cases
-
 // NewScheduler returns a new scheduler with the given name. It uses the
-// given client instance for registering leadership for a job.
+// given client instance for contesting leadership for a job.
 func NewScheduler(nodeName string, client *datastore.Client) Scheduler {
-	return func(ctx context.Context, job jobs.Job) {
+	return func(ctx context.Context, job jobs.Job, t time.Duration) {
 		globals.Logger.Infof(ctx, "Starting %s scheduler on node %s", job.Name, nodeName)
 		for {
 			select {
-			case <-time.After(1 * time.Minute):
-				err := becomeLeader(ctx, nodeName, job.Name, client)
+			case <-time.After(t):
+				err := becomeLeader(ctx, nodeName, job.Name, client, t)
 
 				if err == nil {
 					job.Do(ctx, 5)
 				} else {
-					globals.Logger.Errorf(ctx, "Sitting out: %s", err)
+					globals.Logger.Errorf(ctx, "Idle: %s", err)
 				}
 			case <-ctx.Done():
 				globals.Logger.Infof(ctx, "Terminating %s scheduler on node %s", job.Name, nodeName)
@@ -44,7 +42,7 @@ func NewScheduler(nodeName string, client *datastore.Client) Scheduler {
 	}
 }
 
-func becomeLeader(ctx context.Context, nodeName, jobName string, client *datastore.Client) error {
+func becomeLeader(ctx context.Context, nodeName, jobName string, client *datastore.Client, t time.Duration) error {
 
 	_, err := client.RunInTransaction(ctx, func(tx *datastore.Transaction) error {
 		var l lease
@@ -61,7 +59,7 @@ func becomeLeader(ctx context.Context, nodeName, jobName string, client *datasto
 		// leader has already expired OR the current scheduler was the previous leader
 		if err == datastore.ErrNoSuchEntity || l.Expiry.Before(time.Now()) || l.Leader == nodeName {
 			l.Leader = nodeName
-			l.Expiry = time.Now().Add(1 * time.Minute)
+			l.Expiry = time.Now().Add(t)
 			_, err := tx.Put(key, &l)
 
 			return err
