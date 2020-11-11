@@ -1,6 +1,7 @@
 # Leader Election in Go
+[![Build Status](https://travis-ci.org/utsavgupta/go-leader-election.svg?branch=main)](https://travis-ci.org/utsavgupta/go-leader-election)
 
-This project demonstrates how to implement leader election in Go. This application uses Google Datastore for persisting data.
+This project demonstrates leader election implementation in Go. The application uses Google Datastore for persisting data.
 
 For more details on the design of this demo please refer to the companion article found [here](https://www.utsavgupta.in/blog/leader-election/).
 
@@ -23,7 +24,7 @@ $ gcloud components install cloud-datastore-emulator
 $ gcloud beta emulators datastore start  
 ```
 
-In a new terminal window set environment variables to specify application stage and port number. In addition to that you need to set the variables needed by the application to initialize the Datastore client. These variables can be set through a gcloud command.
+In a new terminal window export environment variables to set application stage and port number. In addition to those variables, you need to set the variables needed by the application to initialize the Datastore client. These variables can be set through a gcloud command.
 
 ```bash
 $ # in the go-leader-election directory
