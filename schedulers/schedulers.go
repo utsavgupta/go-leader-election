@@ -55,8 +55,9 @@ func becomeLeader(ctx context.Context, nodeName, jobName string, client *datasto
 			return err
 		}
 
-		// Become the leader only if an entry for the given job does not exist OR the lease of the previous
-		// leader has already expired OR the current scheduler was the previous leader
+		// Become the leader only if an entry for the given job does not exist
+		// OR the lease of the previous leader has already expired
+		// OR the current scheduler was the previous leader
 		if err == datastore.ErrNoSuchEntity || l.Expiry.Before(time.Now()) || l.Leader == nodeName {
 			l.Leader = nodeName
 			l.Expiry = time.Now().Add(t)
