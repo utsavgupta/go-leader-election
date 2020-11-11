@@ -54,7 +54,7 @@ func main() {
 
 	go func(c context.Context, cl *datastore.Client) {
 		goPreacherScheduler := schedulers.NewScheduler(nodeName, cl)
-		goPreacherScheduler(c, jobs.NewPreacher("go_preacher", "Go is a modern language for the web", os.Stdout), 1*time.Minute)
+		goPreacherScheduler(c, jobs.NewPreacher("go_preacher", "Go is the best modern programming language", os.Stdout), 1*time.Minute)
 	}(ctx, client)
 
 	go func(c context.Context, cl *datastore.Client) {
